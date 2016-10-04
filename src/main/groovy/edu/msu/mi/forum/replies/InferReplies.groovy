@@ -28,11 +28,14 @@ class InferReplies {
     Map handleToName = [:]
     boolean processRollCall = false
 
-
+    public InferReplies {
+    }
+    
     public InferReplies(Corpus corpus, boolean processRollCall = false) {
         this.corpus = corpus
         this.processRollCall = processRollCall
     }
+    
 
     public Conversation getConversation() {
         conversation ?: (conversation = corpus.getLongConversation())
