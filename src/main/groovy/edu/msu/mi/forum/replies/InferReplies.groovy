@@ -1,11 +1,12 @@
 package edu.msu.mi.forum.replies
 
 import edu.msu.mi.forum.model.Conversation
-import edu.msu.mi.forum.model.Corpus
+//import edu.msu.mi.forum.model.Corpus
 import edu.msu.mi.forum.model.DiscussionThread
 import edu.msu.mi.forum.model.Post
 import edu.msu.mi.forum.util.GroovyUtils
 import edu.msu.mi.forum.util.WordChecker
+import edu.msu.mi.forum.webmd.Loader.Corpus
 import groovy.util.logging.Log4j
 
 import java.util.regex.Matcher
@@ -28,14 +29,17 @@ class InferReplies {
     Map handleToName = [:]
     boolean processRollCall = false
 
-    public InferReplies {
-    }
-    
+    /*InferReplies(Corpus corpus) {
+        this.corpus = corpus
+        //this.processRollCall = processRollCall
+        process(null)
+    }*/
+
     public InferReplies(Corpus corpus, boolean processRollCall = false) {
         this.corpus = corpus
         this.processRollCall = processRollCall
+        process(null)
     }
-    
 
     public Conversation getConversation() {
         conversation ?: (conversation = corpus.getLongConversation())
@@ -189,6 +193,7 @@ class InferReplies {
             return result
         }
 
+
         corpus.postsByAuthor.each { Post post ->
             if (post.poster != poster && counts[poster]) {
                 Map m = compressList(names)
@@ -263,7 +268,7 @@ class InferReplies {
             occurrences.clear()
         }
 
-        corpus.repliesByFirstPoster.each { Post p ->
+       /* corpus.repliesByFirstPoster.each { Post p ->
             String text = cleanPostText(p.content)
             if (newPoster(p)) {
                 if (topposter != null) account()
@@ -275,7 +280,7 @@ class InferReplies {
             } as Set
 
             GroovyUtils.countOccurrences(occurrences, names)
-        }
+        } */
 
         //this only picks up the most frequent matching word
         account()

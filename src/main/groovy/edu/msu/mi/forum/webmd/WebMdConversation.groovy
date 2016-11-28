@@ -12,12 +12,12 @@ import groovy.sql.Sql
  */
 class WebMdConversation extends ConversationImpl {
 
-/*    public static enum Column {
+       public static enum Column {
         ID, REPLY, CREATED_TS, CREATED_S, AUTHOR, TEXT, THREAD, SUBJECT
-    }*/
-    public static enum Column {
-        NAME, AUTHORID, URL, THREAD, POSTID, TEXT, AUTHOR, REPLYTOID, SEQUENCE, USERNAME, SUBJECT, POSTDATE
     }
+    /*public static enum Column {
+        NAME, AUTHORID, URL, THREAD, POSTID, TEXT, AUTHOR, REPLYTOID, SEQUENCE, USERNAME, SUBJECT, POSTDATE
+    }*/
 
     /**
      *
@@ -36,9 +36,9 @@ class WebMdConversation extends ConversationImpl {
         Map<String, DiscussionThread> threads = [:]
         s.eachRow(query) { it ->
 
-            def d = cols[Column.POSTDATE] ? new Date(((java.sql.Timestamp) it[cols[Column.POSTDATE]]).getTime()) : new Date((it[cols[Column.POSTDATE]] as Long) * 1000l)
-            //Post p = new PostImpl(it[cols[Column.ID]] as String, null, it[cols[Column.AUTHOR]].trim(), d)
-            Post p = new PostImpl(it[cols[Column.POSTID]] as String, null, it[cols[Column.USERNAME]], d)
+            def d = cols[Column.CREATED_TS] ? new Date(((java.sql.Timestamp) it[cols[Column.CREATED_TS]]).getTime()) : new Date((it[cols[Column.CREATED_S]] as Long) * 1000l)
+            Post p = new PostImpl(it[cols[Column.ID]] as String, null, it[cols[Column.AUTHOR]].trim(), d)
+            //Post p = new PostImpl(it[cols[Column.POSTID]] as String, null, it[cols[Column.USERNAME]], d)
             p.setContent(it[cols[Column.TEXT]])
             String thread = it[cols[Column.THREAD]] as String;
            if (!threads[thread]) {
