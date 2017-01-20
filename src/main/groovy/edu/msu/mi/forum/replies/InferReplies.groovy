@@ -38,6 +38,7 @@ class InferReplies {
     public InferReplies(Corpus corpus, boolean processRollCall = false) {
         this.corpus = corpus
         this.processRollCall = processRollCall
+        //this change is here
         process(null)
     }
 
@@ -61,13 +62,15 @@ class InferReplies {
     public Map process(Date endDate = null) {
 
         Map result = [:]
-
+        Thread threads
         //Find anything that looks like a reference
         extractReferences()
 
 
         //go through each thread and attempt to resolve replies based on references
-        getConversation().allThreads.collectEntries() { DiscussionThread thread ->
+       // threads = getConversation().allThreads.collectEntries()
+
+        getConversation().allThreads { DiscussionThread thread ->
             if (!endDate || thread.posts[0].time < endDate) {
                 result << processThread(thread, endDate)
             } else [:]
@@ -110,8 +113,11 @@ class InferReplies {
                 return false
             }
         }
+//        handleToName = GroovyUtils.sumCollectedItems(signatureExtractionBySelfReference(threads),
+//                signatureExtractionByReply(), signatureExtractionBySubstring(), signatureExtractionByFrequentClosing())
+
         handleToName = GroovyUtils.sumCollectedItems(signatureExtractionBySelfReference(threads),
-                signatureExtractionByReply(), signatureExtractionBySubstring(), signatureExtractionByFrequentClosing())
+                signatureExtractionByReply(), signatureExtractionBySubstring())
 
         handleToName = handleToName.collectEntries { String k, Set v ->
             [k.toLowerCase(), (v.collect { it.toLowerCase() } as Set)]
@@ -193,8 +199,7 @@ class InferReplies {
             return result
         }
 
-
-        corpus.postsByAuthor.each { Post post ->
+        corpus.postsByAuthor().each { Post post ->
             if (post.poster != poster && counts[poster]) {
                 Map m = compressList(names)
                 if (m) {
